@@ -1,0 +1,54 @@
+name: Test code on checkin
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+  
+jobs:
+  test:
+    name: Test code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Display the version of go that we have installed
+        run: go version
+
+      - name: Examine Go source code and report suspicious constructs
+        run: go vet
+
+      - name: Execute test functions
+        run: go test
+        
+      - name: Install and run Staticcheck
+        run: go install honnef.co/go/tools/cmd/staticcheck@2025.1.1 && staticcheck
+        
+      #- name: Running Staticcheck 
+        #uses: dominikh/staticcheck-action@v1
+        #with:
+          #version: "latest"
+      
+      # github.com/gordonklaus/ineffassign
+      - name: Install and run ineffassign
+        run: go get github.com/gordonklaus/ineffassign && ineffassign .
+
+      - name: Running Golint   
+        #uses: Jerome1337/golint-action@v1.0.2
+        #with:
+        #  golint-path: '.'
+        run: go get golang.org/x/lint/golint && golint -set_exit_status
+          
+      - name: Running Gofmt 
+        #uses: Jerome1337/gofmt-action@v1.0.5
+        #with:
+        #  gofmt-path: '.'
+        #  gofmt-flags: '-e -s -w *.go'
+        run: gofmt -e -s -w *.go
