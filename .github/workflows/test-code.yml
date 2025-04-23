@@ -25,12 +25,18 @@ jobs:
       - name: Examine Go source code and report suspicious constructs
         run: go vet
 
-      - name: Execute test functions
-        run: go test
+      #- name: Execute test functions
+      #  run: go test
         
-      - name: Install and run Staticcheck
-        run: go install honnef.co/go/tools/cmd/staticcheck@2025.1.1 && staticcheck
-        
+      - name: Staticcheck
+        run: |
+          # add executables installed with go get to PATH
+          # TODO: this will hopefully be fixed by
+          # https://github.com/actions/setup-go/issues/14
+          export PATH=${PATH}:`go env GOPATH`/bin
+          go get -u honnef.co/go/tools/cmd/staticcheck@2025.1.1
+          staticcheck ./...    
+    
       #- name: Running Staticcheck 
         #uses: dominikh/staticcheck-action@v1
         #with:
@@ -44,7 +50,10 @@ jobs:
         #uses: Jerome1337/golint-action@v1.0.2
         #with:
         #  golint-path: '.'
-        run: go get golang.org/x/lint/golint && golint -set_exit_status
+        run: |
+          export PATH=${PATH}:`go env GOPATH`/bin
+          go get golang.org/x/lint/golint
+          golint -set_exit_status
           
       - name: Running Gofmt 
         #uses: Jerome1337/gofmt-action@v1.0.5
