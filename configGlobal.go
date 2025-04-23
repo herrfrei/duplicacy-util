@@ -212,7 +212,7 @@ func hasFailureNotifier() bool {
 // Checks (by type) if notifier is unique
 func isUniqueNotifier(notifier Notifier, collection []Notifier) bool {
 	for _, existing := range collection {
-		if notifier.(Notifier) == existing.(Notifier) {
+		if notifier == existing {
 			return false
 		}
 	}

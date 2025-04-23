@@ -17,7 +17,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -29,7 +28,7 @@ import (
 // Set up logging for test purposes
 func setupLogging() (*log.Logger, *os.File, error) {
 	// Create output log file
-	file, err := ioutil.TempFile("", "taltos_log")
+	file, err := os.CreateTemp("", "taltos_log")
 	if err != nil {
 		logError(nil, fmt.Sprint("Error: ", err))
 		return nil, nil, err
@@ -105,7 +104,7 @@ func TestRunDuplicacyBackup(t *testing.T) {
 		}
 
 		// Check results of anon function
-		expectedOutputInBytes, err := ioutil.ReadFile(path.Join("test/assets", test.resultsFile))
+		expectedOutputInBytes, err := os.ReadFile(path.Join("test/assets", test.resultsFile))
 		if err != nil {
 			t.Errorf("unable to read backup results file %s", err)
 			return
@@ -160,7 +159,7 @@ func TestRunDuplicacyCopy(t *testing.T) {
 		}
 
 		// Check results of anon function
-		expectedOutputInBytes, err := ioutil.ReadFile(path.Join("test/assets", test.resultsFile))
+		expectedOutputInBytes, err := os.ReadFile(path.Join("test/assets", test.resultsFile))
 		if err != nil {
 			t.Errorf("unable to read backup results file %s", err)
 			return
