@@ -30,12 +30,8 @@ jobs:
         
       - name: Staticcheck
         run: |
-          # add executables installed with go get to PATH
-          # TODO: this will hopefully be fixed by
-          # https://github.com/actions/setup-go/issues/14
-          export PATH=${PATH}:`go env GOPATH`/bin
-          go get -u honnef.co/go/tools/cmd/staticcheck@2025.1.1
-          staticcheck ./...    
+          GOBIN=$PWD/bin go get -u honnef.co/go/tools/cmd/staticcheck@2025.1.1
+          ./bin/staticcheck ./...    
     
       #- name: Running Staticcheck 
         #uses: dominikh/staticcheck-action@v1
@@ -44,16 +40,17 @@ jobs:
       
       # github.com/gordonklaus/ineffassign
       - name: Install and run ineffassign
-        run: go get github.com/gordonklaus/ineffassign && ineffassign .
+        run: |
+          GOBIN=$PWD/bin go get github.com/gordonklaus/ineffassign 
+          ./bin/ineffassign .
 
       - name: Running Golint   
         #uses: Jerome1337/golint-action@v1.0.2
         #with:
         #  golint-path: '.'
         run: |
-          export PATH=${PATH}:`go env GOPATH`/bin
-          go get golang.org/x/lint/golint
-          golint -set_exit_status
+          OBIN=$PWD/bin go get golang.org/x/lint/golint
+          ./bin/golint -set_exit_status ./...
           
       - name: Running Gofmt 
         #uses: Jerome1337/gofmt-action@v1.0.5
