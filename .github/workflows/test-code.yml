@@ -30,11 +30,8 @@ jobs:
         
       - name: Staticcheck
         run: |
-          [ -d $PWD/bin ] || mkdir -p $PWD/bin
-          ls -l
-          GOBIN=$PWD/bin go get -u honnef.co/go/tools/cmd/staticcheck@2025.1.1
-          ls -l bin          
-          ./bin/staticcheck ./...    
+          go install honnef.co/go/tools/cmd/staticcheck@2025.1.1
+          staticcheck ./...    
     
       #- name: Running Staticcheck 
         #uses: dominikh/staticcheck-action@v1
